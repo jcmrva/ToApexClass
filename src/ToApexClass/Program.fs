@@ -23,10 +23,32 @@ let filesAndContents (cfg:Config) =
     | _ -> 
         Map.empty
 
+let replacements (line:string) =
+    let replaceIf (orig:string) (replace:string) (txt:string) =
+        if txt.Contains($" {orig} ") then txt.Replace(orig, replace) else txt
+
+    let clearStartsWith (orig:string) (txt:string) =
+        if txt.StartsWith(orig) then "" else txt
+
+    line
+    |> clearStartsWith "using"
+    |> clearStartsWith "namespace"
+    |> clearStartsWith "{"
+    |> clearStartsWith "}"
+    |> replaceIf "bool" "Boolean"
+    |> replaceIf "bool?" "Boolean"
+    |> replaceIf "Nullable<bool>" "Boolean"
+    |> replaceIf "int" "Integer"
+    |> replaceIf "int?" "Integer"
+    |> replaceIf "Nullable<int>" "Integer"
+    |> replaceIf "DateTime?" "DateTime"
+    |> replaceIf "Nullable<DateTime>" "DateTime"
+
 let convert cfg filename contents =
+    let replaced =
+        Array.map replacements contents
 
-
-    contents
+    replaced
 
 let save cfg filename contents =
     let p = Path.Combine (cfg.OutputDir, filename)
@@ -52,11 +74,24 @@ let main argv =
           Files = filesAndContents cfg
         }
 
-    if args.Contains View then
-        printfn "%A" model
-    else
+    let converted =
         model.Files
         |> Map.map (convert cfg)
+
+    if args.Contains View then
+        printfn "%A\n" model.Cfg
+
+        let toDisplay file apex =
+            printfn "%s\n" (file + cfg.ApexExtn)
+
+            Array.fold (fun s l -> if l = "" then s else s + l + "\n") "" apex
+            |> printfn "%s\n" 
+
+        converted
+        |> Map.iter toDisplay
+        
+    else
+        converted
         |> Map.iter (save cfg)
 
     0
