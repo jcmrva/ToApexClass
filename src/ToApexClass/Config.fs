@@ -11,6 +11,8 @@ type Args =
     | [<MainCommand; Mandatory; First;>] Input of Path:string
     | [<AltCommandLine("-o")>] Output of Path:string
     | [<AltCommandLine("-r")>] Recurse
+    | [<AltCommandLine("-x")>] Extension of string
+    | [<AltCommandLine("-v")>] View
     with interface IArgParserTemplate with member a.Usage = argHelp a
 
 let argHelp a =
@@ -26,6 +28,14 @@ Output directory path.
 """
     | Recurse -> """
 Search all subdirectories.
+"""
+    | Extension _ -> """
+Apex file extension.
+  Defaults to .cls.
+"""
+    | View -> """
+Skip creating output files.
+  View transformed contents in the console.
 """
 
 let private errHandler =
@@ -62,4 +72,5 @@ type Config =
     { Input : PathType
       OutputDir : string
       Recurse : bool
+      ApexExtn : string
     }
