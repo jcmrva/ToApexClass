@@ -23,12 +23,14 @@ let filesAndContents (cfg:Config) =
     | _ -> 
         Map.empty
 
-let convert files =
-    files
+let convert cfg filename contents =
 
-let save path extn filename contents =
-    let p = Path.Combine (path, filename)
-    File.WriteAllLines (p + extn, contents)
+
+    contents
+
+let save cfg filename contents =
+    let p = Path.Combine (cfg.OutputDir, filename)
+    File.WriteAllLines (p + cfg.ApexExtn, contents)
     ()
 
 [<EntryPoint>]
@@ -54,6 +56,7 @@ let main argv =
         printfn "%A" model
     else
         model.Files
-        |> Map.iter (save cfg.OutputDir cfg.ApexExtn)
+        |> Map.map (convert cfg)
+        |> Map.iter (save cfg)
 
     0

@@ -22,17 +22,21 @@ Input path, absolute or relative to the current directory.
   If the path is a directory, all .cs files will be used.
   If no .cs files are found, an error is returned.
 """
+
     | Output _ -> """
 Output directory path.
   If no value is provided, the current directory is used.
 """
+
     | Recurse -> """
 Search all subdirectories.
 """
+
     | Extension _ -> """
 Apex file extension.
   Defaults to .cls.
 """
+
     | View -> """
 Skip creating output files.
   View transformed contents in the console.

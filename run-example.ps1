@@ -1,0 +1,1 @@
+dotnet run -p .\src\ToApexClass\ -f net5.0 -- . -r -o .\artifacts
