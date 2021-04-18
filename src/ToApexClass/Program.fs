@@ -14,26 +14,42 @@ let filesAndContents (cfg:Config) =
         let opts = EnumerationOptions(RecurseSubdirectories = cfg.Recurse)
         
         Directory.GetFiles(d, "*.cs", opts) 
-        |> Array.map (fun fn -> fn, File.ReadAllLines fn)
-        |> Map.ofArray
-        
+        |> Array.map (fun fn -> Path.GetFileName fn, File.ReadAllLines fn)
+        |> Map.ofArray        
     | File f ->
-        Map.add f (File.ReadAllLines f) Map.empty
+        Map.add (Path.GetFileName f) (File.ReadAllLines f) Map.empty
+    | _ -> 
+        Map.empty
 
+let convert files =
+    files
+
+let save path filename contents =
+    let p = Path.Combine (path, filename)
+    File.WriteAllLines (p, contents)
+    ()
 
 [<EntryPoint>]
 let main argv =
     let args = argParser.Parse argv
 
     let cfg = 
-        Config.Default <| args.PostProcessResult(<@Input@>, pathCheck)
-        |> fun cfg -> { cfg with Recurse = args.Contains Recurse }
+        { Recurse = args.Contains Recurse;
+          Input = args.GetResult Input |> inputPath;
+          OutputDir = args.GetResult (Output, defaultValue = Directory.GetCurrentDirectory ()); 
+        }
+
+    if not <| Directory.Exists cfg.OutputDir then 
+        Directory.CreateDirectory cfg.OutputDir |> ignore
 
     let model =
         { Cfg = cfg
           Files = filesAndContents cfg
         }
 
-    printfn "%A" model
+    //printfn "%A" model
+
+    model.Files
+    |> Map.iter (save cfg.OutputDir)
 
     0

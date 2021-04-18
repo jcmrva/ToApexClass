@@ -5,7 +5,7 @@ open Argu
 open System
 open System.IO
 
-type PathType = | File of string | Directory of string
+type PathType = | File of string | Directory of string | InvalidPath
 
 type Args =
     | [<MainCommand; Mandatory; First;>] Input of Path:string
@@ -50,24 +50,16 @@ let argParser =
 let parseResults argv =
     argParser.Parse(argv)
 
-let pathCheck p =
-    if Directory.Exists p || File.Exists p then p 
-    else failwith $"Input path is not a valid directory or file: {p}"
+let inputPath path =
+    if Directory.Exists path then 
+        Directory path
+    else if File.Exists path then 
+        File path
+    else 
+        InvalidPath
 
 type Config =
     { Input : PathType
       OutputDir : string
       Recurse : bool
     }
-    static member Default path =
-        let p = 
-            if Directory.Exists path then 
-                Directory path
-            else 
-                if not <| File.Exists path then failwith $"Input path is not a valid directory or file: {path}" // improbable
-                File path
-
-        { Input = p
-          OutputDir = Directory.GetCurrentDirectory()
-          Recurse = false
-        }
