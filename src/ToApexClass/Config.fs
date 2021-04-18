@@ -10,6 +10,7 @@ type PathType = | File of string | Directory of string
 type Args =
     | [<MainCommand; Mandatory; First;>] Input of Path:string
     | [<AltCommandLine("-o")>] Output of Path:string
+    | [<AltCommandLine("-r")>] Recurse
     with interface IArgParserTemplate with member a.Usage = argHelp a
 
 let argHelp a =
@@ -22,6 +23,9 @@ Input path, absolute or relative to the current directory.
     | Output _ -> """
 Output directory path.
   If no value is provided, the current directory is used.
+"""
+    | Recurse -> """
+Search all subdirectories.
 """
 
 let private errHandler =
@@ -53,6 +57,7 @@ let pathCheck p =
 type Config =
     { Input : PathType
       OutputDir : string
+      Recurse : bool
     }
     static member Default path =
         let p = 
@@ -64,4 +69,5 @@ type Config =
 
         { Input = p
           OutputDir = Directory.GetCurrentDirectory()
+          Recurse = false
         }

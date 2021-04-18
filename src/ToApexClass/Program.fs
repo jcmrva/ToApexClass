@@ -8,10 +8,15 @@ type Model =
     }
 
 
-let files (cfg:PathType) =
-    match cfg with
+let filesAndContents (cfg:Config) =
+    match cfg.Input with
     | Directory d ->
-        Map.empty
+        let opts = EnumerationOptions(RecurseSubdirectories = cfg.Recurse)
+        
+        Directory.GetFiles(d, "*.cs", opts) 
+        |> Array.map (fun fn -> fn, File.ReadAllLines fn)
+        |> Map.ofArray
+        
     | File f ->
         Map.add f (File.ReadAllLines f) Map.empty
 
@@ -20,14 +25,15 @@ let files (cfg:PathType) =
 let main argv =
     let args = argParser.Parse argv
 
-    let cfg = Config.Default <| args.PostProcessResult(<@Input@>, pathCheck)
+    let cfg = 
+        Config.Default <| args.PostProcessResult(<@Input@>, pathCheck)
+        |> fun cfg -> { cfg with Recurse = args.Contains Recurse }
 
     let model =
         { Cfg = cfg
-          Files = files cfg.Input
+          Files = filesAndContents cfg
         }
 
     printfn "%A" model
 
     0
-    
