@@ -30,11 +30,19 @@ let replacements (line:string) =
     let clearStartsWith (orig:string) (txt:string) =
         if txt.StartsWith(orig) then "" else txt
 
+    let clearAttribute (txt:string) =
+        if txt.Contains("[") && txt.Contains("]") then "" else txt
+
+    let clearInitializer (txt:string) =
+        if txt.Contains("} =") then txt.Substring(0, txt.IndexOf("} =") + 1) else txt
+
     line
     |> clearStartsWith "using"
     |> clearStartsWith "namespace"
     |> clearStartsWith "{"
     |> clearStartsWith "}"
+    |> clearAttribute
+    |> clearInitializer
     |> replaceIf "bool" "Boolean"
     |> replaceIf "bool?" "Boolean"
     |> replaceIf "Nullable<bool>" "Boolean"

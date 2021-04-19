@@ -12,7 +12,9 @@ type Args =
     | [<AltCommandLine("-o")>] Output of Path:string
     | [<AltCommandLine("-r")>] Recurse
     | [<AltCommandLine("-x")>] Extension of string
+    | [<AltCommandLine("-h")>] Header of string option
     | [<AltCommandLine("-v")>] View
+    | [<AltCommandLine("-q")>] Quiet
     with interface IArgParserTemplate with member a.Usage = argHelp a
 
 let argHelp a =
@@ -28,18 +30,28 @@ Output directory path.
   If no value is provided, the current directory is used.
 """
 
-    | Recurse -> """
-Search all subdirectories.
-"""
-
     | Extension _ -> """
 Apex file extension.
   Defaults to .cls.
 """
 
+    | Header _ -> """
+Include a comment at the top of each Apex file.
+  Provide your own text or leave blank to use the default.
+"""
+
+    | Recurse -> """
+Search all subdirectories.
+"""
+
     | View -> """
 Skip creating output files.
   View transformed contents in the console.
+"""
+
+    | Quiet -> """
+No console output.
+  Ignored if View is used.
 """
 
 let private errHandler =
@@ -60,9 +72,6 @@ let argParser =
         programName = "toapexclass", 
         errorHandler = errHandler,
         checkStructure = checkStructure)
-
-let parseResults argv =
-    argParser.Parse(argv)
 
 let inputPath path =
     if Directory.Exists path then 
