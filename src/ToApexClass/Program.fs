@@ -67,15 +67,10 @@ let save cfg filename contents =
 let main argv =
     let args = argParser.Parse argv
 
-    let cfg = 
-        { Recurse = args.Contains Recurse;
-          Input = args.GetResult Input |> inputPath;
-          OutputDir = args.GetResult (Output, defaultValue = Directory.GetCurrentDirectory ()); 
-          ApexExtn = args.GetResult (Extension, defaultValue = ".cls"); 
-        }
-
-    if not <| Directory.Exists cfg.OutputDir then do
-        Directory.CreateDirectory cfg.OutputDir |> ignore
+    let cfg =        
+        args //argParser.Parse argv
+        |> fun a -> a.GetAllResults ()
+        |> List.fold updateConfig Config.Zero
 
     let model =
         { Cfg = cfg
