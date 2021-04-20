@@ -1,1 +1,1 @@
-dotnet run -p .\src\ToApexClass\ -f net5.0 -- .\example -v
+dotnet run -p .\src\ToApexClass\ -f net5.0 -- .\example -vh

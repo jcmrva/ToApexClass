@@ -4,7 +4,7 @@ open System.Linq
 
 type Model =
     { Cfg : Config
-      Files : Map<string, string []>
+      Files : Map<string, string list>
     }
 
 
@@ -13,13 +13,13 @@ let filesAndContents (cfg:Config) =
         Path.GetFileNameWithoutExtension f 
     match cfg.Input with
     | Directory d ->
-        let opts = EnumerationOptions(RecurseSubdirectories = cfg.Recurse)
+        let opts = EnumerationOptions (RecurseSubdirectories = cfg.Recurse)
         
         Directory.GetFiles(d, "*.cs", opts) 
-        |> Array.map (fun fn -> filename fn, File.ReadAllLines fn)
-        |> Map.ofArray        
+        |> Array.map (fun fn -> filename fn, File.ReadAllLines fn |> Array.toList)
+        |> Map.ofArray
     | File f ->
-        Map.add (filename f) (File.ReadAllLines f) Map.empty
+        Map.add (filename f) (File.ReadAllLines f |> Array.toList) Map.empty
     | _ -> 
         Map.empty
 
@@ -52,23 +52,22 @@ let replacements (line:string) =
     |> replaceIf "DateTime?" "DateTime"
     |> replaceIf "Nullable<DateTime>" "DateTime"
 
-let convert cfg filename contents =
+let convert cfg _ contents =
     let replaced =
-        Array.map replacements contents
-
-    replaced
+        List.map replacements contents
+    match cfg.Header with
+    | Some h -> h::replaced
+    | None -> replaced
 
 let save cfg filename contents =
     let p = Path.Combine (cfg.OutputDir, filename)
-    File.WriteAllLines (p + cfg.ApexExtn, contents)
+    File.WriteAllLines (p + cfg.ApexExtn, contents |> List.toArray)
     ()
 
 [<EntryPoint>]
 let main argv =
-    let args = argParser.Parse argv
-
     let cfg =        
-        args //argParser.Parse argv
+        argParser.Parse argv
         |> fun a -> a.GetAllResults ()
         |> List.fold updateConfig Config.Zero
 
@@ -80,14 +79,14 @@ let main argv =
     let converted =
         model.Files
         |> Map.map (convert cfg)
-
-    if args.Contains View then
+    
+    if cfg.View then
         printfn "%A\n" model.Cfg
 
         let toDisplay file apex =
             printfn "%s\n" (file + cfg.ApexExtn)
 
-            Array.fold (fun s l -> if l = "" then s else s + l + "\n") "" apex
+            List.fold (fun s l -> if l = "" then s else s + l + "\n") "" apex
             |> printfn "%s\n" 
 
         converted
