@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 
-namespace Example
+namespace ToApexClass.Example.Cs
 {
-    public class Stuff
+    public class Example
     {
         public string Details { get; set; } = "Disappearing text.";
         public bool IsTrueBool { get; set; }
