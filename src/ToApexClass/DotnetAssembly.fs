@@ -3,8 +3,20 @@ module DotnetAssembly
 open Mono.Cecil
 
 
-let getTypes (file:string) =
-    let md = ModuleDefinition.ReadModule file
-    
-    seq { for td in md.Types do if td.IsPublic then yield td }
+let getTypes (md:ModuleDefinition) =
+    md.Types 
+    |> Seq.filter (fun t -> t.IsPublic) 
     |> Seq.toList
+
+let getProperties (td:TypeDefinition) =
+    td.Properties
+    |> Seq.toList
+
+[<RequireQualifiedAccess>]
+module Attr =
+    open ToApexClass.Attributes
+
+    let placeholder = nameof ApexPlaceholder
+    let exclude = nameof ApexExclude
+    let defaultval = nameof ApexDefaultValue
+    let name = nameof ApexName

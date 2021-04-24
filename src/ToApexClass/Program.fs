@@ -12,15 +12,15 @@ let filesAndContents (cfg:Config) =
     let filename (f:string) =
         Path.GetFileNameWithoutExtension f 
     match cfg.Input with
-    | Directory d ->
+    | PathType.Directory d ->
         let opts = EnumerationOptions (RecurseSubdirectories = cfg.Recurse)
         
         Directory.GetFiles(d, "*.cs", opts) 
         |> Array.map (fun fn -> filename fn, File.ReadAllLines fn |> Array.toList)
         |> Map.ofArray
-    | File f ->
+    | PathType.File f ->
         Map.add (filename f) (File.ReadAllLines f |> Array.toList) Map.empty
-    | _ -> 
+    | PathType.InvalidPath -> 
         Map.empty
 
 let replacements (line:string) =
@@ -56,7 +56,7 @@ let convert cfg _ contents =
     let replaced =
         List.map replacements contents
     match cfg.Header with
-    | Some h -> h::replaced
+    | Some h -> (h + "\n")::replaced
     | None -> replaced
 
 let save cfg filename contents =
@@ -66,10 +66,8 @@ let save cfg filename contents =
 
 [<EntryPoint>]
 let main argv =
-    let cfg =        
-        argParser.Parse argv
-        |> fun a -> a.GetAllResults ()
-        |> List.fold updateConfig Config.Zero
+    let cfg =
+        argv |> allParseResults |> toConfig
 
     let model =
         { Cfg = cfg
