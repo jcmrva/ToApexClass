@@ -8,9 +8,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Config.fs" />
+    <Compile Include="DotnetAssembly.fs" />
+    <Compile Include="Apex.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Argu" Version="6.1.1" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ToApexClass.Attributes\ToApexClass.Attributes.csproj" />
   </ItemGroup>
 </Project>
