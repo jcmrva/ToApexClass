@@ -4,6 +4,6 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\ToApexClass.Attributes\Attributes.cs" />
+    <Compile Include="..\..\src\ToApexClass.Attributes\ApexAttributes.cs" />
   </ItemGroup>
 </Project>

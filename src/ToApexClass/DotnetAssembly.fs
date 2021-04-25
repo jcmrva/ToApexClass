@@ -4,13 +4,17 @@ open Mono.Cecil
 
 
 let getTypes (md:ModuleDefinition) =
-    md.Types 
-    |> Seq.filter (fun t -> t.IsPublic) 
-    |> Seq.toList
+    md.Types |> Seq.filter (fun t -> t.IsPublic) |> Seq.toList
 
 let getProperties (td:TypeDefinition) =
-    td.Properties
-    |> Seq.toList
+    td.Properties |> Seq.toList
+
+let getClassAttributes (td:TypeDefinition) =
+    td.CustomAttributes |> Seq.toList
+
+let getPropertyAttributes (pd:PropertyDefinition) =
+    pd.CustomAttributes |> Seq.toList
+
 
 [<RequireQualifiedAccess>]
 module Attr =

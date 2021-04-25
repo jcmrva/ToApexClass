@@ -41,3 +41,8 @@ and ClassProperty =
       Type : PlatformType
     }
 
+open System.Text.RegularExpressions
+
+let validName (name:string) =
+    Regex.Replace (name, "[^\w]", "_")
+

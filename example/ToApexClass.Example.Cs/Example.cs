@@ -4,6 +4,7 @@ using ToApexClass.Attributes;
 
 namespace ToApexClass.Example.Cs
 {
+    [ApexName("C# Example")]
     public class Example
     {
         public string Details { get; set; } = "Disappearing text.";
