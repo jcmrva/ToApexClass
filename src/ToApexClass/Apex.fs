@@ -43,6 +43,14 @@ and ClassProperty =
 
 open System.Text.RegularExpressions
 
-let validName (name:string) =
-    Regex.Replace (name, "[^\w]", "_")
+let apexNameOrDefault name dflt =
+    if System.String.IsNullOrWhiteSpace name then dflt else name
+
+let ensureValidName (name:string) =
+    let rep = Regex.Replace (name, "[^\w]", "_")
+    let rxm = Regex.Match (rep, "[a-zA-Z]")
+    if rxm.Success then
+        rep.Substring (rxm.Index, rep.Length - rxm.Index)
+    else 
+        rep
 

@@ -38,4 +38,16 @@ namespace ToApexClass.Attributes
 
         public ApexPlaceholder(string val) { this.val = val; }
     }
+    
+    [AttributeUsage(AttributeTargets.Property |
+                    AttributeTargets.Field |
+                    AttributeTargets.Method |
+                    AttributeTargets.Class |
+                    AttributeTargets.Interface)]
+    public class ApexComment : Attribute
+    {
+        private string val;
+
+        public ApexComment(string val) { this.val = val; }
+    }
 }

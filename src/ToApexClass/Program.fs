@@ -18,9 +18,11 @@ let filesAndContents (cfg:Config) =
         Directory.GetFiles(d, "*.cs", opts) 
         |> Array.map (fun fn -> filename fn, File.ReadAllLines fn |> Array.toList)
         |> Map.ofArray
-    | PathType.File f ->
+    | PathType.CsFile f ->
         Map.add (filename f) (File.ReadAllLines f |> Array.toList) Map.empty
-    | PathType.InvalidPath -> 
+    | PathType.DllFile f ->
+        Map.empty // TODO
+    | PathType.InvalidPath ->
         Map.empty
 
 let replacements (line:string) =
