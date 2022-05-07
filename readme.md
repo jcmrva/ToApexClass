@@ -31,11 +31,11 @@ This does not require additional library dependencies in your .NET code but plac
 
 A standalone executable is not provided.
 
-If you have the .NET SDK (Core 3.1 or higher, preferably 5.0) installed, ToApexClass can be run from source by cloning this repository, then from root:
+If you have the .NET SDK installed, ToApexClass can be run from source by cloning this repository, then from root:
 
 `dotnet run -p .\src\ToApexClass\ -f net5.0 -- .\path\to\Class.cs`
 
-Otherwise, the .NET runtime (Core 3.1 or higher) is required.
+Otherwise, the .NET runtime (6.0 or higher) is required.
 
 `TODO tool install instructions pending Nuget publication`
 
@@ -51,6 +51,16 @@ C# is case-sensitive; Apex is case-*in*sensitive.
 
 Apex only supports 3 collection types: List/Array, Map, and Set.
 
+## Build
+
+`dotnet build`
+
 ## Alternatives
 
 - https://github.com/apexsharp/apexparser
+
+## Key Dependencies
+
+- [Argu](https://github.com/fsprojects/Argu) for command line argument parsing
+- [cecil](https://github.com/jbevain/cecil) for reading types from .NET assemblies
+- [Expecto](https://github.com/haf/expecto) for testing

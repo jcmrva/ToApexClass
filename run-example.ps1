@@ -1,1 +1,1 @@
-dotnet run -p .\src\ToApexClass\ -f net5.0 -- .\example\ToApexClass.Example.Cs\Example.cs -v -h "// a quick test"
+dotnet run --project .\src\ToApexClass\ -f net6.0 -- .\example\ToApexClass.Example.Cs\Example.cs -v -h "// a quick test"
